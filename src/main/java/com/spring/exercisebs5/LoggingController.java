@@ -1,6 +1,7 @@
 package com.spring.exercisebs5;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,8 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoggingController {
 
+    @Autowired MyProperties myProperties;
+
     @RequestMapping("/")
     public String index() {
+        System.out.println("maxFileSize en controller: "+ myProperties.getMaxFileSize());
         log.trace("A TRACE Message");
         log.debug("A DEBUG Message");
         log.info("An INFO Message");

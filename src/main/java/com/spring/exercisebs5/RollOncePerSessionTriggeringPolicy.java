@@ -1,30 +1,38 @@
 package com.spring.exercisebs5;
 
 import ch.qos.logback.core.rolling.TriggeringPolicyBase;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 
-//@Configuration
-//@PropertySource("application.configuration")
-public class RollOncePerSessionTriggeringPolicy<E> extends TriggeringPolicyBase<E> {
+@Component
+public class RollOncePerSessionTriggeringPolicy<E> extends TriggeringPolicyBase<E>  {
     private static boolean doRolling = true;
-
-    //Duda: no lee el valor del fichero.
-    //@Value("${maxFileSize}")
-    //private String maxFileSize;
+    private static long maxFileSize;
 
     @Override
     public boolean isTriggeringEvent(File activeFile, E event) {
     // roll the first time when the event gets called
-        //System.out.println("maxFileSize: "+maxFileSize);
         if (doRolling) {
             doRolling = false;
             return true;
         }
-        if (activeFile.length()>5120) return true;
+        if (activeFile.length()>maxFileSize) return true;
         return false;
+    }
+
+    @Autowired MyProperties myProperties;
+
+    @PostConstruct
+    void init() {
+        System.out.println("En init");
+        if (myProperties == null)
+            System.out.println("myProperties es nulo");
+        else {
+          maxFileSize = Integer.parseInt(myProperties.getMaxFileSize());
+          System.out.println("Saliendo de init con maxFileSize: " + maxFileSize);
+        }
     }
 }
